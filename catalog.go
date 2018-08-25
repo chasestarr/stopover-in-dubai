@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
@@ -28,7 +28,7 @@ func catalogRoutes() *chi.Mux {
 	router.Use(authMiddleware)
 	router.Post("/", createCatalog)
 	router.Get("/{catalogID}", getCatalog)
-	// router.Post("/movie", addMovie)
+	router.Post("/{catalogID}/movies", addMovie)
 	return router
 }
 
@@ -79,10 +79,55 @@ func getCatalog(w http.ResponseWriter, r *http.Request) {
 	err := res.One(&catalog)
 
 	if err != nil {
-		log.Println(err)
 		render.Render(w, r, notFound)
 		return
 	}
 
 	render.JSON(w, r, catalog)
+}
+
+func addMovie(w http.ResponseWriter, r *http.Request) {
+	type input struct {
+		MovieID int `json:"movieId"`
+	}
+
+	catalogID, err := strconv.Atoi(chi.URLParam(r, "catalogID"))
+	userID, err := getUserIDFromContext(r.Context())
+	if err != nil {
+		render.Render(w, r, undefinedError(err))
+		return
+	}
+
+	var body input
+	decoder := json.NewDecoder(r.Body)
+	err = decoder.Decode(&body)
+	if err != nil {
+		render.Render(w, r, badRequest(err))
+		return
+	}
+
+	rows, err := db.Query(`Select * from users_catalogs WHERE catalog_id = ? AND user_id = ?`, catalogID, userID)
+	if err != nil {
+		render.Render(w, r, forbidden)
+		return
+	}
+
+	var usersCatalogs []UsersCatalog
+	iter := sqlbuilder.NewIterator(rows)
+	iter.All(&usersCatalogs)
+
+	if len(usersCatalogs) < 1 {
+		render.Render(w, r, forbidden)
+		return
+	}
+
+	catalogMovie := &CatalogMovie{CatalogID: catalogID, MovieID: body.MovieID}
+	col := db.Collection("catalogs_movies")
+	err = col.InsertReturning(catalogMovie)
+	if err != nil {
+		render.Render(w, r, undefinedError(err))
+		return
+	}
+
+	render.Status(r, http.StatusCreated)
 }

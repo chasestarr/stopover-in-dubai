@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -46,7 +45,6 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 	err := res.One(&user)
 
 	if err != nil {
-		log.Println(err)
 		render.Render(w, r, notFound)
 		return
 	}

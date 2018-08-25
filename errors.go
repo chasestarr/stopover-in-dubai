@@ -48,4 +48,5 @@ func undefinedError(err error) render.Renderer {
 }
 
 var authFailed = &errResponse{HTTPStatusCode: 401, StatusText: "Could not find user with email-password combination."}
+var forbidden = &errResponse{HTTPStatusCode: 403, StatusText: "Forbidden."}
 var notFound = &errResponse{HTTPStatusCode: 404, StatusText: "Resource not found."}

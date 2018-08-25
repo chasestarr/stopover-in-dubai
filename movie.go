@@ -16,6 +16,13 @@ type Movie struct {
 	Overview string `json:"overview"`
 }
 
+// CatalogMovie represents the join table between catalogs and movies
+type CatalogMovie struct {
+	ID        int `db:"id,omitempty"`
+	CatalogID int `db:"catalog_id"`
+	MovieID   int `db:"movie_id"`
+}
+
 func movieRoutes() *chi.Mux {
 	router := chi.NewRouter()
 	router.Get("/search", searchMovies)

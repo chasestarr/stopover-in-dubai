@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -50,7 +49,6 @@ func userIDFromToken(tokenString string) (string, error) {
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		log.Println(claims)
 		return claims["userID"].(string), nil
 	}
 
