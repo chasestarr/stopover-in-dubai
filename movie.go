@@ -1,4 +1,4 @@
-package movie
+package main
 
 import (
 	"fmt"
@@ -16,8 +16,7 @@ type Movie struct {
 	Overview string `json:"overview"`
 }
 
-// Routes defines the available catalog related api routes
-func Routes() *chi.Mux {
+func movieRoutes() *chi.Mux {
 	router := chi.NewRouter()
 	router.Get("/search", searchMovies)
 	router.Get("/{movieID}", getMovie)

@@ -1,4 +1,4 @@
-package catalog
+package main
 
 import (
 	"fmt"
@@ -10,12 +10,11 @@ import (
 
 // Catalog is a collection of movies
 type Catalog struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID   int    `db:"id" json:"id"`
+	Name string `db:"name" json:"name"`
 }
 
-// Routes defines the available catalog related api routes
-func Routes() *chi.Mux {
+func catalogRoutes() *chi.Mux {
 	router := chi.NewRouter()
 	// router.Post("/", createCatalog)
 	router.Get("/{catalogID}", getCatalog)

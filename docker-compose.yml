@@ -1,0 +1,21 @@
+version: '2'
+services:
+  api:
+    image: chasestarr/stopover-in-dubai
+    working_dir: /go/src/stopover-in-dubai
+    command: ./main
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/go/src/stopover-in-dubai
+    ports:
+      - '8080:8080'
+    links:
+      - postgres
+    environment:
+      PORT: 8080
+  postgres:
+    image: postgres:latest
+    ports:
+      - '5432:5432'

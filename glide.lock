@@ -1,0 +1,14 @@
+hash: 31b8fa492ab4bba7c4304d0c081b94b4b7cd21c5c0f5204e6feae5d7692f4a44
+updated: 2018-08-24T16:51:28.833178632Z
+imports:
+- name: github.com/go-chi/chi
+  version: e83ac2304db3c50cf03d96a2fcd39009d458bc35
+  subpackages:
+  - middleware
+- name: github.com/go-chi/render
+  version: 3215478343fbc559bd3fc08f7031bb134d6bdad5
+- name: github.com/lib/pq
+  version: 4ded0e9383f75c197b3a2aaa6d590ac52df6fd79
+  subpackages:
+  - oid
+testImports: []

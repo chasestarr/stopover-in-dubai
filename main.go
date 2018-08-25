@@ -3,15 +3,33 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
 
-	"github.com/chasestarr/stopover-in-dubai/catalog"
-	"github.com/chasestarr/stopover-in-dubai/movie"
-	"github.com/chasestarr/stopover-in-dubai/user"
+	"upper.io/db.v3/lib/sqlbuilder"
+	"upper.io/db.v3/postgresql"
 )
+
+var db sqlbuilder.Database
+
+func init() {
+	var connectDSN = os.Getenv("POSTGRES_URI")
+
+	dbSettings, err := postgresql.ParseURL(connectDSN)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	db, err = postgresql.Open(dbSettings)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("connected to database.")
+}
 
 func routes() *chi.Mux {
 	router := chi.NewRouter()
@@ -24,9 +42,9 @@ func routes() *chi.Mux {
 	)
 
 	router.Route("/v1", func(r chi.Router) {
-		r.Mount("/api/users", user.Routes())
-		r.Mount("/api/catalogs", catalog.Routes())
-		r.Mount("/api/movies", movie.Routes())
+		r.Mount("/api/users", userRoutes())
+		r.Mount("/api/catalogs", catalogRoutes())
+		r.Mount("/api/movies", movieRoutes())
 	})
 
 	return router
