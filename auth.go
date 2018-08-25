@@ -6,11 +6,16 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
 )
+
+type contextKey string
+
+var contextKeyUserID = contextKey("userID")
 
 func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
@@ -66,7 +71,12 @@ func authMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), "userID", userID)
+		ctx := context.WithValue(r.Context(), contextKeyUserID, userID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+func getUserIDFromContext(ctx context.Context) (int, error) {
+	val := ctx.Value(contextKeyUserID).(string)
+	return strconv.Atoi(val)
 }
