@@ -1,6 +1,8 @@
 hash: 31b8fa492ab4bba7c4304d0c081b94b4b7cd21c5c0f5204e6feae5d7692f4a44
-updated: 2018-08-24T16:51:28.833178632Z
+updated: 2018-08-25T16:15:31.316497-07:00
 imports:
+- name: github.com/dgrijalva/jwt-go
+  version: 0b96aaa707760d6ab28d9b9d1913ff5993328bae
 - name: github.com/go-chi/chi
   version: e83ac2304db3c50cf03d96a2fcd39009d458bc35
   subpackages:
@@ -11,4 +13,31 @@ imports:
   version: 4ded0e9383f75c197b3a2aaa6d590ac52df6fd79
   subpackages:
   - oid
+- name: github.com/moul/http2curl
+  version: 9ac6cf4d929b2fa8fd2d2e6dec5bb0feb4f4911d
+- name: github.com/parnurzeal/gorequest
+  version: 8e3aed27fe49f7fdc765dad067845f600fc984e8
+- name: github.com/pkg/errors
+  version: 816c9085562cd7ee03e7f8188a1cfd942858cded
+- name: golang.org/x/crypto
+  version: 614d502a4dac94afa3a6ce146bd1736da82514c6
+  subpackages:
+  - bcrypt
+  - blowfish
+- name: golang.org/x/net
+  version: 4bcd98cce591d8c7061bf313d7a3cbad05b58549
+  subpackages:
+  - publicsuffix
+- name: upper.io/db.v3
+  version: d90922beee6de3f39c93ed677f6da82565d07154
+  subpackages:
+  - internal/cache
+  - internal/cache/hashstructure
+  - internal/immutable
+  - internal/sqladapter
+  - internal/sqladapter/compat
+  - internal/sqladapter/exql
+  - lib/reflectx
+  - lib/sqlbuilder
+  - postgresql
 testImports: []
