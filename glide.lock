@@ -1,5 +1,5 @@
 hash: 31b8fa492ab4bba7c4304d0c081b94b4b7cd21c5c0f5204e6feae5d7692f4a44
-updated: 2018-08-25T19:37:22.362734-07:00
+updated: 2018-08-26T13:21:25.295514-07:00
 imports:
 - name: github.com/dgrijalva/jwt-go
   version: 0b96aaa707760d6ab28d9b9d1913ff5993328bae
@@ -7,6 +7,8 @@ imports:
   version: e83ac2304db3c50cf03d96a2fcd39009d458bc35
   subpackages:
   - middleware
+- name: github.com/go-chi/cors
+  version: 07727c846d14299758e54a275dd8c81353c01960
 - name: github.com/go-chi/render
   version: 3215478343fbc559bd3fc08f7031bb134d6bdad5
 - name: github.com/lib/pq
