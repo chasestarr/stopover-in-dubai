@@ -1,43 +1,49 @@
 import React from 'react';
 import Router from 'next/router';
 
-import { toaster } from 'evergreen-ui';
+import { Link, Paragraph, toaster } from 'evergreen-ui';
 
-import { getUser, getUserIdFromToken, setToken } from '../api';
 import withAuth from '../withAuth';
+import Page from '../layouts/Page';
+import { getCatalogs, getUserIdFromToken } from '../api';
+import CreateCatalog from '../components/CreateCatalog';
 
 class Index extends React.Component {
   state = {
-    user: null,
+    catalogs: [],
   };
 
-  componentDidMount() {
-    const userId = getUserIdFromToken();
-    if (!userId) {
-      this.logout();
-    }
-
-    getUser(userId)
-      .then(res => {
-        if (res.status === 200) {
-          return res.json();
-        }
-
-        // break to catch block
-        throw new Error();
-      })
-      .then(user => this.setState({ user }))
-      .catch(this.logout);
+  async componentDidMount() {
+    await this.requestCatalogs();
   }
 
-  logout = () => {
-    toaster.danger('Could not get user information');
-    setToken('');
-    router.push('/users/login');
+  requestCatalogs = async () => {
+    const userId = getUserIdFromToken();
+    try {
+      const response = await getCatalogs(userId);
+      if (response.status === 200) {
+        const catalogs = await response.json();
+        this.setState({ catalogs });
+      }
+    } catch (e) {
+      toaster.danger('Could not request catalogs.');
+    }
   };
 
   render() {
-    return <div>index</div>;
+    return (
+      <Page>
+        <div>
+          {!!this.state.catalogs.length &&
+            this.state.catalogs.map(catalog => (
+              <Link key={catalog.id} href={`catalogs?id=${catalog.id}`} display="block">
+                {catalog.name}
+              </Link>
+            ))}
+        </div>
+        <CreateCatalog onCreateCatalogSuccess={this.requestCatalogs} />
+      </Page>
+    );
   }
 }
 
