@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -45,7 +46,7 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 	err := res.One(&user)
 
 	if err != nil {
-		render.Render(w, r, notFound)
+		http.Error(w, http.StatusText(404), 404)
 		return
 	}
 
@@ -68,7 +69,8 @@ func getUserCatalogs(w http.ResponseWriter, r *http.Request) {
 	`, userID)
 
 	if err != nil {
-		render.Render(w, r, undefinedError(err))
+		log.Println(err)
+		http.Error(w, http.StatusText(500), 500)
 		return
 	}
 
@@ -96,22 +98,32 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&body)
 	if err != nil {
-		render.Render(w, r, badRequest(err))
+		http.Error(w, http.StatusText(422), 422)
+		return
+	}
+
+	var existingUser User
+	col := db.Collection("users")
+	res := col.Find("email", body.Email)
+	err = res.One(&existingUser)
+	if err == nil || existingUser != (User{}) {
+		http.Error(w, http.StatusText(409), 409)
 		return
 	}
 
 	hash, err := hashPassword(body.Password)
 	if err != nil {
-		render.Render(w, r, undefinedError(err))
+		log.Println(err)
+		http.Error(w, http.StatusText(500), 500)
 		return
 	}
 
 	user := &User{Name: body.Name, Email: body.Email, Hash: hash}
 
-	col := db.Collection("users")
 	err = col.InsertReturning(user)
 	if err != nil {
-		render.Render(w, r, undefinedError(err))
+		log.Println(err)
+		http.Error(w, http.StatusText(500), 500)
 		return
 	}
 
@@ -132,7 +144,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&body)
 	if err != nil {
-		render.Render(w, r, badRequest(err))
+		http.Error(w, http.StatusText(422), 422)
 		return
 	}
 
@@ -142,18 +154,19 @@ func login(w http.ResponseWriter, r *http.Request) {
 	err = res.One(&user)
 
 	if err != nil {
-		render.Render(w, r, authFailed)
+		http.Error(w, http.StatusText(401), 401)
 		return
 	}
 
 	if ok := checkPasswordHash(body.Password, user.Hash); !ok {
-		render.Render(w, r, authFailed)
+		http.Error(w, http.StatusText(401), 401)
 		return
 	}
 
 	jwt, err := issueJwt(strconv.Itoa(user.ID))
 	if err != nil {
-		render.Render(w, r, undefinedError(err))
+		log.Println(err)
+		http.Error(w, http.StatusText(500), 500)
 		return
 	}
 

@@ -1,5 +1,5 @@
 hash: 31b8fa492ab4bba7c4304d0c081b94b4b7cd21c5c0f5204e6feae5d7692f4a44
-updated: 2018-08-25T16:15:31.316497-07:00
+updated: 2018-08-25T19:37:22.362734-07:00
 imports:
 - name: github.com/dgrijalva/jwt-go
   version: 0b96aaa707760d6ab28d9b9d1913ff5993328bae
@@ -25,7 +25,7 @@ imports:
   - bcrypt
   - blowfish
 - name: golang.org/x/net
-  version: 4bcd98cce591d8c7061bf313d7a3cbad05b58549
+  version: 8a410e7b638dca158bf9e766925842f6651ff828
   subpackages:
   - publicsuffix
 - name: upper.io/db.v3
