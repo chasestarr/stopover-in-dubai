@@ -64,8 +64,8 @@ func getUserCatalogs(w http.ResponseWriter, r *http.Request) {
 			catalogs
 		INNER JOIN
 			users_catalogs on catalogs.id = users_catalogs.catalog_id
-		INNER JOIN
-			users on users.id = ?
+		WHERE
+			users_catalogs.user_id = ?
 	`, userID)
 
 	if err != nil {

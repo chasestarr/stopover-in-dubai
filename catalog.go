@@ -71,6 +71,12 @@ func createCatalog(w http.ResponseWriter, r *http.Request) {
 }
 
 func getCatalog(w http.ResponseWriter, r *http.Request) {
+	type output struct {
+		ID     int     `json:"id"`
+		Name   string  `json:"name"`
+		Movies []Movie `json:"movies"`
+	}
+
 	catalogID := chi.URLParam(r, "catalogID")
 
 	var catalog Catalog
@@ -80,10 +86,26 @@ func getCatalog(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		render.Render(w, r, notFound)
+		http.Error(w, http.StatusText(404), 404)
 		return
 	}
 
-	render.JSON(w, r, catalog)
+	var catalogMovies []CatalogMovie
+	col = db.Collection("catalogs_movies")
+	res = col.Find("catalog_id", catalogID)
+	err = res.All(&catalogMovies)
+	if err != nil {
+		http.Error(w, http.StatusText(404), 404)
+		return
+	}
+
+	var movies []Movie
+	for _, m := range catalogMovies {
+		movie := requestMovie(strconv.Itoa(m.MovieID))
+		movies = append(movies, movie)
+	}
+
+	render.JSON(w, r, output{ID: catalog.ID, Name: catalog.Name, Movies: movies})
 }
 
 func addMovie(w http.ResponseWriter, r *http.Request) {
